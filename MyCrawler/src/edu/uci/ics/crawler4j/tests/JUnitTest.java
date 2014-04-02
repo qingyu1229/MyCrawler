@@ -34,4 +34,12 @@ public class JUnitTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void  test2(){
+		
+		String s="http://www.baidu.com";
+		
+		System.out.println(s.indexOf("htt"));
+	}
 }

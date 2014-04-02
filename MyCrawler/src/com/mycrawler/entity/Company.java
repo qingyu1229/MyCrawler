@@ -22,9 +22,43 @@ public class Company {
 	private String website;//网站
 	private String pro;//简介
 	private Date storeDate;//抓取时间
+	private int empCount;//员工人数
+	private int turnover;//年营业额（单位万元）
+	private String website_id;//黄页网上的id或其他唯一标识
+	private String parent_web;//所在的黄页网
+	private String parent_web_name;//所在的黄页网名称
 	
 	
-	
+	public String getParent_web_name() {
+		return parent_web_name;
+	}
+	public void setParent_web_name(String parent_web_name) {
+		this.parent_web_name = parent_web_name;
+	}
+	public int getEmpCount() {
+		return empCount;
+	}
+	public void setEmpCount(int empCount) {
+		this.empCount = empCount;
+	}
+	public int getTurnover() {
+		return turnover;
+	}
+	public void setTurnover(int turnover) {
+		this.turnover = turnover;
+	}
+	public String getWebsite_id() {
+		return website_id;
+	}
+	public void setWebsite_id(String website_id) {
+		this.website_id = website_id;
+	}
+	public String getParent_web() {
+		return parent_web;
+	}
+	public void setParent_web(String parent_web) {
+		this.parent_web = parent_web;
+	}
 	public Long getId() {
 		return id;
 	}
