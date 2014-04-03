@@ -28,6 +28,11 @@ public class Company {
 	private String parent_web;//所在的黄页网
 	private String parent_web_name;//所在的黄页网名称
 	
+	/*
+	public void setValues(String property,String value){
+		
+	}*/
+	
 	
 	public String getParent_web_name() {
 		return parent_web_name;
