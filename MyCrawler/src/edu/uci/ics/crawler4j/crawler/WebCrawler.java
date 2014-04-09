@@ -63,19 +63,21 @@ public class WebCrawler implements Runnable {
 	private Thread myThread;
 
 	/**
-	 * 
+	 * 从页面中提取内容
 	 * The parser that is used by this crawler instance to parse the content of
 	 * the fetched pages.
 	 */
 	private Parser parser;
 
 	/**
+	 * 从网上提取内容
 	 * The fetcher that is used by this crawler instance to fetch the content of
 	 * pages from the web.
 	 */
 	private PageFetcher pageFetcher;
 
 	/**
+	 * 读取robots协议，获取是否可以抓取的信息
 	 * The RobotstxtServer instance that is used by this crawler instance to
 	 * determine whether the crawler is allowed to crawl the content of each
 	 * page.
@@ -89,6 +91,7 @@ public class WebCrawler implements Runnable {
 	private DocIDServer docIdServer;
 
 	/**
+	 * 管理抓取队列
 	 * The Frontier object that manages the crawl queue.
 	 */
 	private Frontier frontier;

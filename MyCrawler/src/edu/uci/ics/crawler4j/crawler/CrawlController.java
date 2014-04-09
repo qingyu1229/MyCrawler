@@ -371,6 +371,7 @@ public class CrawlController extends Configurable {
 	 * 
 	 */
 	public void addSeenUrl(String url, int docId) {
+		//获取标准URL
 		String canonicalUrl = URLCanonicalizer.getCanonicalURL(url);
 		if (canonicalUrl == null) {
 			logger.error("Invalid Url: " + url);

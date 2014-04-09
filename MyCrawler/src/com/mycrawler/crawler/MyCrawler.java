@@ -1,5 +1,7 @@
 package com.mycrawler.crawler;
 
+import org.apache.log4j.Logger;
+
 import com.mycrawler.entity.Company;
 import com.mycrawler.filter.ContainFilter;
 import com.mycrawler.filter.UrlFilter;
@@ -11,10 +13,19 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class MyCrawler extends WebCrawler {
 
+	protected static final Logger logger = Logger.getLogger(MyCrawler.class.getName());
+	
 	private String domain = "";
 	private UrlFilter urlFilter;
 	private ContainFilter containFilter;
-
+	
+	
+	/**
+	 * 
+	 * @param domain 主域名 例如“http://www.baidu.com” 的domain为'baidu'
+	 * @param urlFilter 设置需要抓取内容的URL
+	 * @param containFilter 设置抓取内容的规则
+	 */
 	public MyCrawler(String domain, UrlFilter urlFilter,
 			ContainFilter containFilter) {
 		this.domain = domain;
@@ -31,7 +42,7 @@ public class MyCrawler extends WebCrawler {
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
 		return (!Staticvalues.FILTERS.matcher(href).matches())
-				&& href.contains(domain);
+				&& href.contains(domain);//仅限本站内抓取
 	}
 
 	@Override
@@ -42,7 +53,7 @@ public class MyCrawler extends WebCrawler {
 		if (!bl) {
 			return;
 		}
-
+		
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			htmlParseData.getHtml();
@@ -50,6 +61,8 @@ public class MyCrawler extends WebCrawler {
 			Company c = containFilter.doFilter();
 
 			c.setWebsite(url);
+			
+			//接下来编写存储数据的模块
 			
 			/*String text = htmlParseData.getText();
 			String html = htmlParseData.getHtml();
