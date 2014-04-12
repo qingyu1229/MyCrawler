@@ -2,6 +2,12 @@ package com.mycrawler.entity;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Company {
 	
 	private Long id;
@@ -64,6 +70,8 @@ public class Company {
 	public void setParent_web(String parent_web) {
 		this.parent_web = parent_web;
 	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)  
 	public Long getId() {
 		return id;
 	}
