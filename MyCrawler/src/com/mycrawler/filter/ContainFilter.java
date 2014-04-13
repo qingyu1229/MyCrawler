@@ -20,13 +20,12 @@ public class ContainFilter {
 	private ContainFilter()
 	{}
 	
-	public ContainFilter(Map<String,String> map,String htmlString){
+	public ContainFilter(Map<String,String> map){
 		this.map=map;
-		this.htmlString=htmlString;
 	}
 	
 	
-	public Company doFilter(){
+	public Company doFilter(String htmlString){
 		Company company=new Company();
 		Document doc= Jsoup.parse(htmlString);
 		Map<String,String> reslutMap=new HashMap<String,String>();

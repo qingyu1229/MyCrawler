@@ -6,27 +6,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class UrlFilter implements FilterInterface {
+public class UrlFilter  {
 	
 	private List<String> containList=new ArrayList<String>();//URL中是否包含指定字符串
 	private List<String> regularList=new ArrayList<String>();//正则匹配
 	
-	private String url="";
 	
 	private UrlFilter()
 	{
 		
 	}
-	public UrlFilter(String url,List<String> containList,List<String> regularList)
+	
+	public UrlFilter(List<String> containList,List<String> regularList)
 	{
-		this.url=url;
 		this.containList=containList;
 		this.regularList=regularList;
 	}
 	
 	
-	@Override
-	public boolean doFilter() 
+	public boolean doFilter(String url)
 	{
 		if(containList!=null)
 		{

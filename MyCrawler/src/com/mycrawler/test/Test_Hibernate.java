@@ -3,6 +3,7 @@ package com.mycrawler.test;
 import org.hibernate.Session;
 import org.junit.Test;
 
+import com.mycrawler.dao.CompanyImp;
 import com.mycrawler.entity.Company;
 import com.mycrawler.factory.HibernateSessionFactory;
 
@@ -21,4 +22,15 @@ public class Test_Hibernate {
 		session.close();
 		
 	}
+	
+	@Test
+	public void test_CompantImp(){
+		CompanyImp cm=new CompanyImp();
+		Company c=new Company();
+		c.setWebsite_id("123");
+		cm.addOrUpdateCompany(c);
+		
+		
+	}
+	
 }

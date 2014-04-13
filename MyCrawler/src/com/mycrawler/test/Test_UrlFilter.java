@@ -22,9 +22,9 @@ public class Test_UrlFilter {
 		String s="(http|https)://[^\\s]*";
 		regularList.add(s);
 		
-		UrlFilter urlfilter=new UrlFilter("http://www.baidu.com/",containList,regularList);
+	/*	UrlFilter urlfilter=new UrlFilter("http://www.baidu.com/",containList,regularList);
 		boolean bl=urlfilter.doFilter();
-		System.out.println(bl);
+		System.out.println(bl);*/
 		
 	}
 }

@@ -1,0 +1,92 @@
+Crawler4j的使用
+（以下内容全部为转载，供自己查阅用）
+ 
+下载地址：
+http://code.google.com/p/crawler4j/
+ 
+Crawler4j的使用
+网上对于crawler4j这个爬虫的使用的文章很少，Google到的几乎没有，只能自己根据crawler4j的源码进行修改。这个爬虫最大的特点就是简单易用，他连API都不提供。刚开始的时候实在恨不能适应。好在他的源码也提供了几个例子。对于一般的应用大可以直接修改它的例子。
+使用方法很简单，直接用Eclipse打开工程。可以看到src下有三个demo例子。说一下最简单的simple例子。
+使用crawler4j的关键的继承WebCrawler类实现自己的爬虫类MyCrawler，然后根据需要覆盖WebCrawler的几个函数就可以了。
+public boolean shouldVisit(WebURL url) // 根据url进行网页的解析，对返回为TRUE的网页进行抓取。
+public void visit(Page page)  // 解析网页内容，page类包含了丰富的方法，可以利用这些方法得到网页的内容和属性。
+Crawler包
+Crawler.CrawController 控制爬虫，先addseed，再开启多个爬虫，并不断监听各个爬虫存活状态。
+Crawler.WebCrawler 爬虫
+1. Run()：不断循环，每次从Frontier拿50条url，对每条url，processPage(curUrl)。
+2. processPage(curURL)：用PageFetcher.fetch爬取网页，如果curURL有redirect，则将redirect url的url加入Frontier，以后再调度；如果爬取正常，则先进行parse，生成Page，将新urls降入Frontier(新加入url的深度此时确定)，调用visit(Page){用户自定义操作}。
+Crawler.Configurations 读取crawler4j.properties中的信息
+Crawler.PageFetcher 启动IdleConnectionMonitorThread，用fetch(Page, ignoreIfBinary)，爬取单个Page页面。是一个static类。
+Crawler.Page 一个页面
+Crawler.PageFetchStatus 单个页面爬取的配置，如返回爬取状态数字所代表的含义等等。
+Crawler.HTMLParser 对HTML源码进行parse，存入Page中。
+Crawler.LinkExtractor 抽取出一个HTML页面中包含的所有link。
+Crawler.IdleConnectionMonitorThread 用来监听连接器（用来发送get请求，获取页面），其connMgr则负责HTML请求的发送。
+
+url包
+url.WebURL 代表一条url，内含docid, depth, url值
+url.URLCanonicalizer 将url进行normalize
+
+Frontier包
+Frontier.Frontier
+Init() 如果resumable，则从env所指home中读取已处理过得urls，scheduleAll加入调度workQueue中。
+Frontier.workQueues 要处理的页面集，如果resumable，在构造时会打开对应env中的database(PendingURLsDB)，获取上一次遗留的未处理的urls。
+Frontier.inprocessPages 当前正在处理的页面集，继承workQueues，存入InProcessPagesDB数据库。
+Frontier.DocIDServer 对应数据库DocIDs，记录已经见过的页面url。
+处理流程：newurl--->workQueues--->inprovessPages--->delete
+Robotstxt包，用来判断url是否被允许。
+Util包，用来提供一些小工具。
+注意点：
+1. seed页面深度为0。
+2. url去重利用的是DocIDServer.newdocid(url)，如果该值大于0，则表示该url以前见过。通过这个机制，所有以前见过的页面都可以被记录识别。
+3. 当设定resumable后，程序跑完后就会把PendingURLsDB和DocIDs保存下来。
+4. 如果不设定resumable，在运行程序前，会把env对应的home目录清空。
+------------------------------------------------------------------------------
+由于最近做实验需要使用到大量的新闻语料库，在网上找了一些都不是自己想要的，所以决定自己写个小程序去爬取New York Times（NYT）上的网页新闻。
+用Java写的爬虫程序有很多，我找了一个叫crawler4j的开源爬虫，这是一个多线程的爬虫，功能比较简单，源代码也比较容易看懂，由于我要对爬虫爬取链接进行一些修改，就直接下了crawler4j的源码加到我自己的工程中。
+然后对爬下来的网页进行处理，使用的是htmlparser这个工具，得到了我要的新闻的Title、Publication Time、Discription、正文等信息。为了更好的组织这些信息，我把这些信息存储到XML文档中。
+花了两个晚上的时间，爬虫程序可以跑起来了，写程序的时候遇到了几个问题。
+1. 在xml中是使用 "\n" 来表示换行的，而在windows中是使用 "\r\n" 来表示换行符的，所以你要是把含有换行符的文本保存到xml文档时他会自动的把 "\r" 转换成转义符 "& #13;" ，要处理掉这个的话，你可以直接把文本里的 "\r" 给删了就行了。
+2. 使用Java中的String.replaceAll(regex, replacement)这个函数时又犯了一个很低级的错误，就是如果执行str.replaceAll(regex, replacement) 时并没有改变str本身的值，所以说要替换str自身的某些字符串时需要执行 str=str.replaceAll(regex, replacement) ，没有意识的这个问题的后果就是花了很长时间在纠结我的程序哪儿出问题了，已经是第二次犯这个错误了，以后不能再犯了啊。
+3. 爬取国外的网站资源太慢了，程序开了两个小时左右才爬取了3000篇新闻，慢的可怜啊，希望多开几个线程看看能不能提升一点效果，要是是由于网速的原因的话，可能效果不大。
+----------------------------------------------------------------------------
+
+Crawler4j的退出问题
+这个问题在网上找了好久也没有好的解决方案，网上的说法是这个爬虫只支持手动强制关闭。无奈只能自己看他的源代码，好在他的源代码也不多。目前的解决方案是。。。直接上代码吧
+一、edu.uci.ics.crawler4j.crawler.CrawlController类
+public CrawlController(String storageFolder) throws Exception {
+  。。。
+// 新建一个监控线程，不知管什么用
+//  PageFetcher.startConnectionMonitorThread();
+ }
+public <T extends WebCrawler> void start(Class<T> _c, int numberOfCrawlers) {
+   。。。
+   // 设置停止标志
+   sign_stop = false;
+   while (true) {
+    。。。
+     }
+    // 停止线程
+    if(sign_stop){
+     for (int i = 0; i < crawlers.size(); i++) {
+      crawlers.get(i).setStop(true);
+     }
+     return;
+    }
+    if (!someoneIsWorking) {
+    。。。
+ }
+ 
+ public void stop() {
+ sign_stop = true;
+}
+二、edu.uci.ics.crawler4j.crawler.WebCrawler类
+// 停止标志
+ private boolean stop;
+public void run() {
+  onStart();
+  stop = false;
+  while (!stop) {
+   。。。
+  }
+ } 

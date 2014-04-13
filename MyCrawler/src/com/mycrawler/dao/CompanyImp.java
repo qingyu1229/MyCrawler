@@ -1,5 +1,6 @@
 package com.mycrawler.dao;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.mycrawler.entity.Company;
@@ -9,7 +10,6 @@ public class CompanyImp implements CompanyDao {
 
 	@Override
 	public Company getCompany(Company company) {
-		// TODO Auto-generated method stub
 		
 		
 		
@@ -38,12 +38,20 @@ public class CompanyImp implements CompanyDao {
 
 	@Override
 	public boolean addOrUpdateCompany(Company company) {
-		// TODO Auto-generated method stub
+		String checkSql="select id from Company  where website_id=?";
 		
-		
-		
-		
-		return false;
+		Long id=0L;
+		Session session= HibernateSessionFactory.getSession();
+		session.beginTransaction();
+		Query query=session.createQuery(checkSql);
+		query.setString(0, company.getWebsite_id());
+		id= (Long) query.uniqueResult();
+		if(id>0){
+			session.update(company);
+		}
+		session.getTransaction().commit();
+		session.close();
+		return true;
 	}
 
 }
