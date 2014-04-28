@@ -23,6 +23,7 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 
 public class IdleConnectionMonitorThread extends Thread {
     
+	//用来支持多线程使用HttpClient
     private final ThreadSafeClientConnManager connMgr;
     private volatile boolean shutdown;
     
@@ -38,9 +39,11 @@ public class IdleConnectionMonitorThread extends Thread {
                 synchronized (this) {
                     wait(5000);
                     // Close expired connections
+                    // 关闭过期的连接
                     connMgr.closeExpiredConnections();
                     // Optionally, close connections
                     // that have been idle longer than 30 sec
+                 // 关闭空闲时间超过30秒的连接
                     connMgr.closeIdleConnections(30, TimeUnit.SECONDS);
                 }
             }

@@ -129,7 +129,7 @@ public class Frontier extends Configurable {
 					return;
 				}
 				try {
-					List<WebURL> curResults = workQueues.get(max);
+					List<WebURL> curResults = workQueues.get(max);//从队列中取出max个URL
 					workQueues.delete(curResults.size());
 					if (inProcessPages != null) {
 						for (WebURL curPage : curResults) {

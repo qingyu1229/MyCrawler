@@ -22,94 +22,125 @@ public class CrawlConfig {
 	/**
 	 * The folder which will be used by crawler for storing the intermediate
 	 * crawl data. The content of this folder should not be modified manually.
+	 * 保存爬取数据的目录
+	 * 
 	 */
 	private String crawlStorageFolder;
 
 	/**
 	 * If this feature is enabled, you would be able to resume a previously
 	 * stopped/crashed crawl. However, it makes crawling slightly slower
+	 * 如果为true，在构造时会打开对应env中的database(PendingURLsDB)，获取上一次遗留的未处理的urls
 	 */
 	private boolean resumableCrawling = false;
 
 	/**
 	 * Maximum depth of crawling For unlimited depth this parameter should be
 	 * set to -1
+	 * 爬取深度
 	 */
 	private int maxDepthOfCrawling = -1;
 
 	/**
 	 * Maximum number of pages to fetch For unlimited number of pages, this
 	 * parameter should be set to -1
+	 * 最大抓取数
+	 * 
 	 */
 	private int maxPagesToFetch = -1;
 
 	/**
 	 * user-agent string that is used for representing your crawler to web
 	 * servers. See http://en.wikipedia.org/wiki/User_agent for more details
+	 * user-ahent
+	 * 
 	 */
 	private String userAgentString = "crawler4j (http://code.google.com/p/crawler4j/)";
 
 	/**
 	 * Politeness delay in milliseconds (delay between sending two requests to
 	 * the same host).
+	 * 连续发起两次同样的请求的时间间隔 （单位毫秒）
+	 * 
 	 */
 	private int politenessDelay = 200;
 
 	/**
 	 * Should we also crawl https pages?
+	 * 是否抓取Https 加密的网站
+	 * 
 	 */
 	private boolean includeHttpsPages = false;
 
 	/**
 	 * Should we fetch binary content such as images, audio, ...?
+	 * 是否抓取多媒体数据
+	 * 
 	 */
 	private boolean includeBinaryContentInCrawling = false;
 
 	/**
 	 * Maximum Connections per host
+	 * 每个host的最大连接数
+	 * 
 	 */
 	private int maxConnectionsPerHost = 100;
 
 	/**
 	 * Maximum total connections
+	 * 最大连接数
+	 * 
 	 */
 	private int maxTotalConnections = 100;
 
 	/**
 	 * Socket timeout in milliseconds
+	 * Socket超时时间
 	 */
 	private int socketTimeout = 20000;
 
 	/**
 	 * Connection timeout in milliseconds
+	 * 连接超时时间设置
+	 * 
 	 */
 	private int connectionTimeout = 30000;
 
 	/**
 	 * Max number of outgoing links which are processed from a page
+	 * 从每个页面中获取的最大输出链接数
+	 * 
 	 */
 	private int maxOutgoingLinksToFollow = 5000;
 
 	/**
 	 * Max allowed size of a page. Pages larger than this size will not be
 	 * fetched.
+	 * 页面最大允许大小，超过这个值的页面将不会被保存
+	 * 
 	 */
 	private int maxDownloadSize = 1048576;
 
 	/**
 	 * Should we follow redirects?
+	 * 
+	 * 是否抓取重定向的网页
 	 */
 	private boolean followRedirects = true;
 
 	/**
 	 * If crawler should run behind a proxy, this parameter can be used for
 	 * specifying the proxy host.
+	 * 代理服务器地址
+	 * 
 	 */
 	private String proxyHost = null;
 
 	/**
 	 * If crawler should run behind a proxy, this parameter can be used for
 	 * specifying the proxy port.
+	 * 
+	 * 代理服务器接口
 	 */
 	private int proxyPort = 80;
 
@@ -117,6 +148,8 @@ public class CrawlConfig {
 	 * If crawler should run behind a proxy and user/pass is needed for
 	 * authentication in proxy, this parameter can be used for specifying the
 	 * username.
+	 * 代理名
+	 * 
 	 */
 	private String proxyUsername = null;
 
@@ -124,6 +157,8 @@ public class CrawlConfig {
 	 * If crawler should run behind a proxy and user/pass is needed for
 	 * authentication in proxy, this parameter can be used for specifying the
 	 * password.
+	 * 
+	 * 代理密码
 	 */
 	private String proxyPassword = null;
 
@@ -132,7 +167,7 @@ public class CrawlConfig {
 
 	/**
 	 * Validates the configs specified by this instance.
-	 * 
+	 * 程序验证
 	 * @throws Exception
 	 */
 	public void validate() throws Exception {

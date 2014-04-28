@@ -45,23 +45,27 @@ public class CrawlController extends Configurable {
 	/**
 	 * The 'customData' object can be used for passing custom crawl-related
 	 * configurations to different components of the crawler.
+	 * 抓取习惯数据对象
 	 */
 	protected Object customData;
 
 	/**
 	 * Once the crawling session finishes the controller collects the local data
 	 * of the crawler threads and stores them in this List.
+	 * 抓取本地历史抓取数据
 	 */
 	protected List<Object> crawlersLocalData = new ArrayList<Object>();
 
 	/**
 	 * Is the crawling of this session finished?
+	 * 爬虫是否抓取完成
 	 */
 	protected boolean finished;
 
 	/**
 	 * Is the crawling session set to 'shutdown'. Crawler threads monitor this
 	 * flag and when it is set they will no longer process new pages.
+	 * 是否立即停止抓取
 	 */
 	protected boolean shuttingDown;
 
