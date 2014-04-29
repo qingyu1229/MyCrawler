@@ -28,8 +28,10 @@ public class Test_Hibernate {
 		CompanyImp cm=new CompanyImp();
 		Company c=new Company();
 		c.setWebsite_id("123");
+		c.setAddress("address");
+		c.setLinkman("联系人");
+		c.setName("百度在线");
 		cm.addOrUpdateCompany(c);
-		
 		
 	}
 	

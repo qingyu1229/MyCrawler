@@ -24,6 +24,8 @@
         <property name="format_sql">true</property>
         <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
      <mapping class="com.mycrawler.entity.Company"/>
+     <mapping class="com.mycrawler.entity.Yuqingcn"/>
+     
     </session-factory>
 
 </hibernate-configuration>

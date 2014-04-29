@@ -33,23 +33,29 @@ public class Page {
 
     /**
      * The URL of this page.
+     * 这个网页的URL
      */
     protected WebURL url;
 
     /**
      * The content of this page in binary format.
+     * 页面的二进制数据
+     * 
      */
     protected byte[] contentData;
 
     /**
      * The ContentType of this page.
      * For example: "text/html; charset=UTF-8"
+     * 页面编码
+     * 
      */
     protected String contentType;
 
     /**
      * The encoding of the content.
      * For example: "gzip"
+     * 
      */
     protected String contentEncoding;
 
@@ -61,6 +67,8 @@ public class Page {
 
     /**
      * The parsed data populated by parsers
+     * 解析页面数据的工具
+     * 
      */
     protected ParseData parseData;
 
@@ -79,6 +87,7 @@ public class Page {
     /**
      * Loads the content of this page from a fetched
      * HttpEntity.
+     * 从HttpEntity中得到Page
      */
 	public void load(HttpEntity entity) throws Exception {
 

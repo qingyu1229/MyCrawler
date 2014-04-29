@@ -156,6 +156,9 @@ public class WebCrawler implements Runnable {
 	}
 	
 	/**
+	 * 
+	 * 
+	 * 处理抓取时获取到的不同状态，例如：404
 	 * This function is called once the header of a page is fetched.
 	 * It can be overwritten by sub-classes to perform custom logic
 	 * for different status codes. For example, 404 pages can be logged, etc.
@@ -164,6 +167,11 @@ public class WebCrawler implements Runnable {
 	}
 
 	/**
+	 * 
+	 * 
+	 * 由CrawlController实例创建的爬虫实例将会在Crawler结束前调用这个方法，
+	 * WebCrawler的子类可以重写这个方法加载本地数据到controller中，然后controller
+	 * 将这些本地数据与crawlers关联
 	 * The CrawlController instance that has created this crawler instance will
 	 * call this function just before terminating this crawler thread. Classes
 	 * that extend WebCrawler can override this function to pass their local
@@ -176,12 +184,12 @@ public class WebCrawler implements Runnable {
 	}
 
 	public void run() {
-		onStart();
+		onStart();//调用onStart()
 		while (true) {
 			List<WebURL> assignedURLs = new ArrayList<WebURL>(50);
-			isWaitingForNewURLs = true;
-			frontier.getNextURLs(50, assignedURLs);
-			isWaitingForNewURLs = false;
+			isWaitingForNewURLs = true;//将等待新URL设置为TRUE
+			frontier.getNextURLs(50, assignedURLs);//加载URLS到assignedURLs中
+			isWaitingForNewURLs = false;//将等待新URL设置为false
 			if (assignedURLs.size() == 0) {
 				if (frontier.isFinished()) {
 					return;
@@ -222,6 +230,8 @@ public class WebCrawler implements Runnable {
 	}
 
 	/**
+	 * 
+	 * 在这个方法中可以对抓取到的页面进行一些处理
 	 * Classes that extends WebCrawler can overwrite this function to process
 	 * the content of the fetched and parsed page.
 	 * 
@@ -229,6 +239,7 @@ public class WebCrawler implements Runnable {
 	 *            the page object that is just fetched and parsed.
 	 */
 	public void visit(Page page) {
+		
 	}
 
 	private void processPage(WebURL curURL) {
@@ -238,10 +249,12 @@ public class WebCrawler implements Runnable {
 		PageFetchResult fetchResult = null;
 		try {
 			fetchResult = pageFetcher.fetchHeader(curURL);
-			int statusCode = fetchResult.getStatusCode();
+			int statusCode = fetchResult.getStatusCode();//获取到页面的状态
 			handlePageStatusCode(curURL, statusCode, CustomFetchStatus.getStatusDescription(statusCode));
 			if (statusCode != HttpStatus.SC_OK) {
 				if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
+					//HttpStatus.SC_MOVED_PERMANENTLY:客户请求的文档在其他地方，新的URL在Location头中给出，浏览器应该自动地访问新的URL。
+					//HttpStatus.SC_MOVED_TEMPORARILY:类似于301，但新的URL应该被视为临时性的替代，而不是永久性的。
 					if (myController.getConfig().isFollowRedirects()) {
 						String movedToUrl = fetchResult.getMovedToUrl();
 						if (movedToUrl == null) {
@@ -250,6 +263,7 @@ public class WebCrawler implements Runnable {
 						int newDocId = docIdServer.getDocId(movedToUrl);
 						if (newDocId > 0) {
 							// Redirect page is already seen
+							//重定向的网址已经被抓取
 							return;
 						} else {
 							WebURL webURL = new WebURL();
