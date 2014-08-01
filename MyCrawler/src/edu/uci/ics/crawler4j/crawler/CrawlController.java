@@ -80,15 +80,15 @@ public class CrawlController extends Configurable {
 			throws Exception {
 		super(config);
 
-		config.validate();
-		File folder = new File(config.getCrawlStorageFolder());
+		config.validate();//验证配置，配置不全则抛出异常
+		File folder = new File(config.getCrawlStorageFolder());//本地历史抓取记录文件
 		if (!folder.exists()) {
 			if (!folder.mkdirs()) {
 				throw new Exception("Couldn't create this folder: " + folder.getAbsolutePath());
 			}
 		}
 
-		boolean resumable = config.isResumableCrawling();
+		boolean resumable = config.isResumableCrawling();//是否开启了增量抓取
 
 		EnvironmentConfig envConfig = new EnvironmentConfig();
 		envConfig.setAllowCreate(true);

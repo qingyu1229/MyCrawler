@@ -63,7 +63,7 @@ public class PageFetcher extends Configurable {
 
 	protected static final Logger logger = Logger.getLogger(PageFetcher.class);
 
-	protected ThreadSafeClientConnManager connectionManager;
+	protected ThreadSafeClientConnManager connectionManager;//多连接的线程安全的管理器 
 
 	protected DefaultHttpClient httpClient;
 
@@ -71,22 +71,24 @@ public class PageFetcher extends Configurable {
 
 	protected long lastFetchTime = 0;
 
-	protected IdleConnectionMonitorThread connectionMonitorThread = null;
+	protected IdleConnectionMonitorThread connectionMonitorThread = null;//连接监视线程
 
+	
 	public PageFetcher(CrawlConfig config) {
 		super(config);
 
 		HttpParams params = new BasicHttpParams();
-		HttpProtocolParamBean paramsBean = new HttpProtocolParamBean(params);
+		
+		HttpProtocolParamBean paramsBean = new HttpProtocolParamBean(params);//http协议参数
 		paramsBean.setVersion(HttpVersion.HTTP_1_1);
 		paramsBean.setContentCharset("UTF-8");
 		paramsBean.setUseExpectContinue(false);
 
-		params.setParameter(CoreProtocolPNames.USER_AGENT, config.getUserAgentString());
-		params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, config.getSocketTimeout());
-		params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, config.getConnectionTimeout());
+		params.setParameter(CoreProtocolPNames.USER_AGENT, config.getUserAgentString());//设置user-agent
+		params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, config.getSocketTimeout());//设置SocketTimeout
+		params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, config.getConnectionTimeout());//设置ConnectionTimeout
 
-		params.setBooleanParameter("http.protocol.handle-redirects", false);
+		params.setBooleanParameter("http.protocol.handle-redirects", false);//不处理重定向
 
 		SchemeRegistry schemeRegistry = new SchemeRegistry();
 		schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
@@ -96,13 +98,13 @@ public class PageFetcher extends Configurable {
 		}
 
 		connectionManager = new ThreadSafeClientConnManager(schemeRegistry);
-		connectionManager.setMaxTotal(config.getMaxTotalConnections());
-		connectionManager.setDefaultMaxPerRoute(config.getMaxConnectionsPerHost());
+		connectionManager.setMaxTotal(config.getMaxTotalConnections());//最大连接数
+		connectionManager.setDefaultMaxPerRoute(config.getMaxConnectionsPerHost());//每个host的最大连接数
 		httpClient = new DefaultHttpClient(connectionManager, params);
 
 		if (config.getProxyHost() != null) {
 
-			if (config.getProxyUsername() != null) {
+			if (config.getProxyUsername() != null) {//如果使用了代理
 				httpClient.getCredentialsProvider().setCredentials(
 						new AuthScope(config.getProxyHost(), config.getProxyPort()),
 						new UsernamePasswordCredentials(config.getProxyUsername(), config.getProxyPassword()));
@@ -112,7 +114,7 @@ public class PageFetcher extends Configurable {
 			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
         }
 
-        httpClient.addResponseInterceptor(new HttpResponseInterceptor() {
+        httpClient.addResponseInterceptor(new HttpResponseInterceptor() {//设置响应拦截器
 
             @Override
             public void process(final HttpResponse response, final HttpContext context) throws HttpException,
@@ -147,7 +149,7 @@ public class PageFetcher extends Configurable {
 			get = new HttpGet(toFetchURL);
 			synchronized (mutex) {
 				long now = (new Date()).getTime();
-				if (now - lastFetchTime < config.getPolitenessDelay()) {
+				if (now - lastFetchTime < config.getPolitenessDelay()) {//控制连续发起两次同样的请求的时间间隔
 					Thread.sleep(config.getPolitenessDelay() - (now - lastFetchTime));
 				}
 				lastFetchTime = (new Date()).getTime();
@@ -159,11 +161,12 @@ public class PageFetcher extends Configurable {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != HttpStatus.SC_OK) {
 				if (statusCode != HttpStatus.SC_NOT_FOUND) {
+					//301 302 客户请求的文档在其他地方，新的URL在Location头中给出
 					if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
 						Header header = response.getFirstHeader("Location");
 						if (header != null) {
 							String movedToUrl = header.getValue();
-							movedToUrl = URLCanonicalizer.getCanonicalURL(movedToUrl, toFetchURL);
+							movedToUrl = URLCanonicalizer.getCanonicalURL(movedToUrl, toFetchURL);//处理URL
 							fetchResult.setMovedToUrl(movedToUrl);
 						} 
 						fetchResult.setStatusCode(statusCode);
